@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdatePostRequest extends FormRequest
 {
@@ -11,7 +13,8 @@ class UpdatePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $post = Post::find($this->route('id'));
+        return $post->user_id == Auth::id();
     }
 
     /**
@@ -24,7 +27,6 @@ class UpdatePostRequest extends FormRequest
         return [
             'title' => 'required | min:5 | max:200',
             'body' => 'required',
-            'user_id' => 'required'
         ];
     }
 }

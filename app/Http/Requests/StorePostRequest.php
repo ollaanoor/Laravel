@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StorePostRequest extends FormRequest
 {
@@ -24,7 +26,6 @@ class StorePostRequest extends FormRequest
         return [
             'title' => 'required | min:5 | max:255',
             'body' => 'required',
-            'user_id' => 'required'
         ];
     }
 }

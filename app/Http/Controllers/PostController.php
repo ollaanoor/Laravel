@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostCreated;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -17,6 +19,8 @@ class PostController extends Controller
     {
         // Post::factory(15)->create();
         return view('posts.index', ['posts' => Post::all(), 'users' => User::all()]);
+        // return view('posts.index', ['posts' => Post::with('user')->orderByDesc('created_at')->get()]);
+
     }
 
     /**
@@ -32,11 +36,13 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        // return '<h1>Store a newly created resource in storage.</h1>';
-        // dd($request->all());
-        // Post::create($request->only(['title', 'body']));
-        // return Post::create($request->all());
-        return Post::create($request->validated());
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = Auth::id(); 
+
+        $post = Post::create($validatedData); 
+        event(new PostCreated($post));
+
+        return redirect()->route('posts.index');
     }
 
     /**
@@ -62,12 +68,12 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, string $id)
     {
-        // return '<h1>Update the specified field resource with id ' . $id . ' in storage.</h1>';
-        Post::where('id', $id)->update([
-            'title' => $request->input('title'),
-            'body' => $request->input('body'), 
-            'user_id' => $request->input('user_id'),
-        ]);
+        // Post::where('id', $id)->update([
+        //     'title' => $request->input('title'),
+        //     'body' => $request->input('body'), 
+        //     'user_id' => $request->input('user_id'),
+        // ]);
+        Post::where('id', $id)->update($request->validated());
         return redirect()->route('posts.show', ['id' => $id]);
     }
 
@@ -76,6 +82,10 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
+        $post = Post::find($id);
+        if ($post->user_id != Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
         // return '<h1>Remove the specified resource with id ' . $id . ' from storage.</h1>';
         Post::where('id', $id)->delete();
         return redirect()->route('posts.index');

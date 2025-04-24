@@ -26,7 +26,7 @@
         <div class="text-red font-semibold">{{ $message }}</div>
     @enderror
 
-    <label class="block text-lg mt-4 mb-2">
+    <!-- <label class="block text-lg mt-4 mb-2">
     <span class="font-bold">Writer:</span>
     <select name="user_id" id="user_id" required class="w-full px-4 py-2 border rounded-lg bg-white shadow focus:outline-none transition">
         @foreach($users as $user)
@@ -35,7 +35,7 @@
             </option>
         @endforeach
     </select>
-    </label>
+    </label> -->
     
     <button 
         type="submit" 

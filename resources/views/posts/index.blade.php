@@ -31,6 +31,7 @@
                         <td class="p-4 text-gray-600">{{ $post['body'] }}</td>
                         <td class="p-4">
                             <div class="flex space-x-4">
+                                @if(Auth::id() == $post->user_id)
                                 <a href="{{ route('posts.edit', ['id' => $post['id']]) }}" 
                                    class="px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">
                                     Edit
@@ -43,6 +44,7 @@
                                         Delete
                                     </button>
                                 </form>
+                                @endif
                             </div>
                         </td>
                     </tr>
